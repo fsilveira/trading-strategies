@@ -1,0 +1,213 @@
+MANUAL NTSL - VERSÃO CORRIGIDA
+================================
+
+ERROS DE SINTAXE IDENTIFICADOS E CORRIGIDOS:
+
+1. ERRO: Falta de ponto e vírgula (;) após comandos
+   CORREÇÃO: Todos os comandos devem terminar com ponto e vírgula
+
+2. ERRO: Falta de begin/end em estruturas condicionais
+   CORREÇÃO: Estruturas if/then/else devem ter begin/end quando há múltiplos comandos
+
+3. ERRO: Espaçamento incorreto em operadores
+   CORREÇÃO: Operadores devem ter espaços adequados
+
+4. ERRO: Parênteses desbalanceados
+   CORREÇÃO: Verificar parênteses de abertura e fechamento
+
+5. ERRO: Declaração de variáveis incorreta
+   CORREÇÃO: Sintaxe correta: var nome : tipo;
+
+EXEMPLOS CORRIGIDOS:
+
+=== EXEMPLO 1: Estrutura básica ===
+// INCORRETO:
+begin
+if(IsBought )then
+SellToCoverAtMarket
+end
+
+// CORRETO:
+begin
+  if(IsBought) then
+    SellToCoverAtMarket;
+end;
+
+=== EXEMPLO 2: Loop FOR ===
+// INCORRETO:
+For i := n DownTo 1Do
+fatorial := fatorial * i;
+
+// CORRETO:
+for i := n downto 1 do
+  fatorial := fatorial * i;
+
+=== EXEMPLO 3: Estrutura WHILE ===
+// INCORRETO:
+while (nIndex <= Periodo ‐ 1)do
+begin
+sResult := sResult + Preco[nIndex];
+nIndex := nIndex + 1;
+end;
+
+// CORRETO:
+while (nIndex <= Periodo - 1) do
+begin
+  sResult := sResult + Preco[nIndex];
+  nIndex := nIndex + 1;
+end;
+
+=== EXEMPLO 4: Estrutura REPEAT ===
+// INCORRETO:
+repeat
+begin
+fatorial := fatorial * i;
+i := i + 1;
+end
+until (i > n);
+
+// CORRETO:
+repeat
+  fatorial := fatorial * i;
+  i := i + 1;
+until (i > n);
+
+=== EXEMPLO 5: Declaração de variáveis ===
+// INCORRETO:
+var
+fatorial : Integer ;
+i :Integer ;
+
+// CORRETO:
+var
+  fatorial: Integer;
+  i: Integer;
+
+=== EXEMPLO 6: Funções com parâmetros ===
+// INCORRETO:
+if(Low = Low[ 1])and (IsSold )then
+BuyToCoverStop (pStop, pstop);
+
+// CORRETO:
+if (Low = Low[1]) and (IsSold) then
+  BuyToCoverStop(pStop, pStop);
+
+=== EXEMPLO 7: Estrutura IF/ELSE ===
+// INCORRETO:
+if(IsBought )then
+begin
+if(RSI(9,0) > 70)then
+SellToCoverAtMarket;
+end
+else if(IsSold )then
+begin
+if(RSI(9,0) < 30)then
+BuyToCoverAtMarket ;
+end;
+
+// CORRETO:
+if (IsBought) then
+begin
+  if (RSI(9, 0) > 70) then
+    SellToCoverAtMarket;
+end
+else if (IsSold) then
+begin
+  if (RSI(9, 0) < 30) then
+    BuyToCoverAtMarket;
+end;
+
+=== EXEMPLO 8: Chamadas de função ===
+// INCORRETO:
+ifHasPosition then
+closeposition ;
+
+// CORRETO:
+if HasPosition then
+  ClosePosition;
+
+=== EXEMPLO 9: Operadores lógicos ===
+// INCORRETO:
+if(Low = Low[ 1])and (IsSold )then
+
+// CORRETO:
+if (Low = Low[1]) and (IsSold) then
+
+=== EXEMPLO 10: Atribuições ===
+// INCORRETO:
+mPrice := MyPrice ;
+vPosition := Position ;
+
+// CORRETO:
+mPrice := MyPrice;
+vPosition := Position;
+
+REGRAS DE SINTAXE NTSL CORRETAS:
+
+1. PONTO E VÍRGULA:
+   - Obrigatório após cada comando
+   - Obrigatório após declarações de variáveis
+   - Obrigatório após estruturas de controle
+
+2. ESTRUTURAS CONDICIONAIS:
+   - if (condição) then comando;
+   - if (condição) then begin comandos end;
+   - else if (condição) then comando;
+
+3. LOOPS:
+   - for variável := valor to/downto valor do comando;
+   - while (condição) do comando;
+   - repeat comandos until (condição);
+
+4. DECLARAÇÃO DE VARIÁVEIS:
+   - var nome: tipo;
+   - var nome1, nome2: tipo;
+
+5. CHAMADAS DE FUNÇÃO:
+   - NomeFunção(parametro1, parametro2);
+   - Sem espaços antes dos parênteses
+
+6. OPERADORES:
+   - Espaços ao redor de operadores (+, -, *, /, =, <, >, and, or)
+   - Parênteses para agrupar expressões
+
+7. INDENTAÇÃO:
+   - Usar 2 espaços para indentação
+   - Manter consistência na estrutura
+
+8. COMENTÁRIOS:
+   - // para comentários de linha única
+   - { } para comentários de bloco
+
+ESTRUTURA GERAL CORRETA:
+
+input
+  parametro1(10);
+  parametro2(20);
+
+var
+  variavel1: Float;
+  variavel2: Integer;
+
+begin
+  // Código principal aqui
+  if (condição) then
+  begin
+    comando1;
+    comando2;
+  end
+  else
+    comando3;
+end;
+
+FUNÇÕES COMUNS CORRIGIDAS:
+
+- BuyAtMarket; (não BuyAtMarket ;)
+- SellToCoverAtMarket; (não SellToCoverAtMarket ;)
+- IsBought (não IsBought )
+- IsSold (não IsSold )
+- HasPosition (não HasPosition )
+- ClosePosition; (não closeposition ;)
+- Plot(valor); (não Plot (valor);)
+
+Esta versão corrigida deve resolver os principais erros de sintaxe encontrados no manual original.
