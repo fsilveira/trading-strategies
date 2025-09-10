@@ -52,6 +52,29 @@ begin
                    (EMA_40 > EMA_45) and 
                    (EMA_45 > EMA_50);
   
+  // Plotar todas as EMAs no gráfico
+  PlotN(1, EMA_20);  // EMA 20 - Branca, espessura 2
+  SetPlotColor(1, clWhite);
+  SetPlotWidth(1, 2);
+  
+  PlotN(2, EMA_25);  // EMA 25 - Amarela
+  SetPlotColor(2, clYellow);
+  
+  PlotN(3, EMA_30);  // EMA 30 - Amarela
+  SetPlotColor(3, clYellow);
+  
+  PlotN(4, EMA_35);  // EMA 35 - Amarela
+  SetPlotColor(4, clYellow);
+  
+  PlotN(5, EMA_40);  // EMA 40 - Amarela
+  SetPlotColor(5, clYellow);
+  
+  PlotN(6, EMA_45);  // EMA 45 - Amarela
+  SetPlotColor(6, clYellow);
+  
+  PlotN(7, EMA_50);  // EMA 50 - Amarela
+  SetPlotColor(7, clYellow);
+  
   // Variáveis para debug
   TemPosicao := HasPosition;
   TemOrdensPendentes := HasPendingOrders;
