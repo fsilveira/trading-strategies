@@ -11,11 +11,20 @@ var
   // Variáveis para controle
   TendenciaAlta: Boolean;
   ToqueEMA: Boolean;
+  ToqueEMA_Anterior: Boolean;
   EMA_Tocada: Integer;
+  EMA_Tocada_Anterior: Integer;
   PrecoEntrada: Float;
   PrecoStop: Float;
   PrecoTakeProfit: Float;
   Risco: Float;
+  
+  // Variáveis para debug
+  TemPosicao: Boolean;
+  TemOrdensPendentes: Boolean;
+  
+  // Variável para unidade mínima
+  UnidadeMinima: Float;
 
 begin
   // Calcular todas as EMAs
@@ -27,6 +36,13 @@ begin
   EMA_45 := MediaExp(45, Close);
   EMA_50 := MediaExp(50, Close);
   
+  // Calcular unidade mínima baseada na magnitude do preço
+  if Close < 10 then
+    UnidadeMinima := 0.00001    // Para preços < 10 (ex: 1.17470)
+  else if Close < 1000 then
+    UnidadeMinima := 0.001      // Para preços < 1000 (ex: 147.365)
+  else
+    UnidadeMinima := 0.01;      // Para preços >= 1000 (ex: 111880.59)
   
   // Verificar se está em tendência de alta (todas as EMAs em ordem crescente)
   TendenciaAlta := (EMA_20 > EMA_25) and 
@@ -36,81 +52,149 @@ begin
                    (EMA_40 > EMA_45) and 
                    (EMA_45 > EMA_50);
   
+  // Variáveis para debug
+  TemPosicao := HasPosition;
+  TemOrdensPendentes := HasPendingOrders;
   
-  // Verificar se a mínima tocou alguma EMA
+  
+  
+  // Verificar se a mínima do candle ANTERIOR tocou alguma EMA
+  ToqueEMA_Anterior := false;
+  EMA_Tocada_Anterior := 0;
+  
+  if (Low[1] <= EMA_20[1]) and (Low[1] > EMA_25[1]) then
+  begin
+    ToqueEMA_Anterior := true;
+    EMA_Tocada_Anterior := 20;
+  end
+  else if (Low[1] <= EMA_25[1]) and (Low[1] > EMA_30[1]) then
+  begin
+    ToqueEMA_Anterior := true;
+    EMA_Tocada_Anterior := 25;
+  end
+  else if (Low[1] <= EMA_30[1]) and (Low[1] > EMA_35[1]) then
+  begin
+    ToqueEMA_Anterior := true;
+    EMA_Tocada_Anterior := 30;
+  end
+  else if (Low[1] <= EMA_35[1]) and (Low[1] > EMA_40[1]) then
+  begin
+    ToqueEMA_Anterior := true;
+    EMA_Tocada_Anterior := 35;
+  end
+  else if (Low[1] <= EMA_40[1]) and (Low[1] > EMA_45[1]) then
+  begin
+    ToqueEMA_Anterior := true;
+    EMA_Tocada_Anterior := 40;
+  end
+  else if (Low[1] <= EMA_45[1]) and (Low[1] > EMA_50[1]) then
+  begin
+    ToqueEMA_Anterior := true;
+    EMA_Tocada_Anterior := 45;
+  end
+  else if (Low[1] <= EMA_50[1]) and (Low[1] > EMA_50[1]) then
+  begin
+    ToqueEMA_Anterior := true;
+    EMA_Tocada_Anterior := 50;
+  end;
+
+  // Verificar se a mínima do candle ATUAL tocou alguma EMA (para plotagem)
   ToqueEMA := false;
   EMA_Tocada := 0;
   
-  if (Low <= EMA_20) and (Low >= EMA_25 - 0.01) then
+  if (Low <= EMA_20) and (Low > EMA_25) then
   begin
     ToqueEMA := true;
     EMA_Tocada := 20;
+    PlotText("20", clYellow, 0, 7);
+    PaintBar(clYellow);
   end
-  else if (Low <= EMA_25) and (Low >= EMA_30 - 0.01) then
+  else if (Low <= EMA_25) and (Low > EMA_30) then
   begin
     ToqueEMA := true;
     EMA_Tocada := 25;
+    PlotText("25", clAmarelo, 0, 7);
+    PaintBar(clAmarelo);
   end
-  else if (Low <= EMA_30) and (Low >= EMA_35 - 0.01) then
+  else if (Low <= EMA_30) and (Low > EMA_35) then
   begin
     ToqueEMA := true;
     EMA_Tocada := 30;
+    PlotText("30", clYellow, 0, 7);
+    PaintBar(clYellow);
   end
-  else if (Low <= EMA_35) and (Low >= EMA_40 - 0.01) then
+  else if (Low <= EMA_35) and (Low > EMA_40) then
   begin
     ToqueEMA := true;
     EMA_Tocada := 35;
+    PlotText("35", clAmarelo, 0, 7);
+    PaintBar(clAmarelo);
   end
-  else if (Low <= EMA_40) and (Low >= EMA_45 - 0.01) then
+  else if (Low <= EMA_40) and (Low > EMA_45) then
   begin
     ToqueEMA := true;
     EMA_Tocada := 40;
+    PlotText("40", clYellow, 0, 7);
+    PaintBar(clYellow);
   end
-  else if (Low <= EMA_45) and (Low >= EMA_50 - 0.01) then
+  else if (Low <= EMA_45) and (Low > EMA_50) then
   begin
     ToqueEMA := true;
     EMA_Tocada := 45;
+    PlotText("45", clAmarelo, 0, 7);
+    PaintBar(clAmarelo);
   end
-  else if (Low <= EMA_50) and (Low >= EMA_50 - 0.01) then
+  else if (Low <= EMA_50) and (Low > EMA_50) then
   begin
     ToqueEMA := true;
     EMA_Tocada := 50;
+    PlotText("50", clYellow, 0, 7);
+    PaintBar(clYellow);
   end;
   
   // Estratégia principal - apenas em tendência de alta
-  if TendenciaAlta and ToqueEMA and not HasPosition and not HasPendingOrders then
+  if TendenciaAlta and ToqueEMA_Anterior and not TemPosicao and not TemOrdensPendentes then
   begin
-    // Calcular preços
-    PrecoEntrada := High + 0.01;  // Um centavo acima da máxima
+    // Verificar se o preço atual cruzou a máxima do candle anterior (que teve toque no EMA)
+    if High > High[1] then
+    begin
+      // Executar compra imediatamente no mercado
+      BuyAtMarket;
+      
+      // Plotar entrada no gráfico
+      PlotText("ENTRADA COMPRA", clGreen, 0, 6);
+      PaintBar(clGreen);     
+     
+    end;
+  end;
+
+  // Gerenciar stop loss e take profit quando comprado
+  if IsBought then
+  begin
+    // Recalcular preços baseado na EMA tocada no candle anterior
+    if EMA_Tocada_Anterior = 20 then
+      PrecoStop := EMA_25[1] - UnidadeMinima
+    else if EMA_Tocada_Anterior = 25 then
+      PrecoStop := EMA_30[1] - UnidadeMinima
+    else if EMA_Tocada_Anterior = 30 then
+      PrecoStop := EMA_35[1] - UnidadeMinima
+    else if EMA_Tocada_Anterior = 35 then
+      PrecoStop := EMA_40[1] - UnidadeMinima
+    else if EMA_Tocada_Anterior = 40 then
+      PrecoStop := EMA_45[1] - UnidadeMinima
+    else if EMA_Tocada_Anterior = 45 then
+      PrecoStop := EMA_50[1] - UnidadeMinima
+    else if EMA_Tocada_Anterior = 50 then
+      PrecoStop := EMA_50[1] - UnidadeMinima;
     
-    // Determinar stop loss baseado na EMA tocada
-    if EMA_Tocada = 20 then
-      PrecoStop := EMA_25 - 0.01  // Stop abaixo da EMA 25
-    else if EMA_Tocada = 25 then
-      PrecoStop := EMA_30 - 0.01  // Stop abaixo da EMA 30
-    else if EMA_Tocada = 30 then
-      PrecoStop := EMA_35 - 0.01  // Stop abaixo da EMA 35
-    else if EMA_Tocada = 35 then
-      PrecoStop := EMA_40 - 0.01  // Stop abaixo da EMA 40
-    else if EMA_Tocada = 40 then
-      PrecoStop := EMA_45 - 0.01  // Stop abaixo da EMA 45
-    else if EMA_Tocada = 45 then
-      PrecoStop := EMA_50 - 0.01  // Stop abaixo da EMA 50
-    else if EMA_Tocada = 50 then
-      PrecoStop := EMA_50 - 0.01; // Stop abaixo da EMA 50 (última)
-    
-    // Calcular risco e take profit
+    // Recalcular take profit
+    PrecoEntrada := BuyPrice; // Preço de entrada real
     Risco := PrecoEntrada - PrecoStop;
     PrecoTakeProfit := PrecoEntrada + (3 * Risco);
     
-    // Colocar ordem de compra
-    BuyLimit(PrecoEntrada);
-    
-    
-    // Colocar stop loss
-    SellToCoverStop(PrecoStop, PrecoStop);
-    
-    // Colocar take profit
-    SellToCoverLimit(PrecoTakeProfit);
+    // Colocar stop loss e take profit
+    SellShortStop(PrecoStop);
+    SellShortLimit(PrecoTakeProfit);
   end;
 end;
+
