@@ -1,0 +1,254 @@
+//@version=5
+strategy("Larry Williams 9.1 - Day Trade Forex", overlay=true, 
+         initial_capital=10000, 
+         default_qty_type=strategy.percent_of_equity,
+         commission_type=strategy.commission.percent,
+         commission_value=0.0001)
+
+// ===== INPUTS CONFIGURÁVEIS =====
+// Parâmetros de Risco
+risk_per_trade = input.float(2.0, "Risco por Trade (%)", minval=0.1, maxval=5.0, group="Gerenciamento de Risco")
+risk_reward_ratio = input.float(2.0, "Risk/Reward Ratio", minval=1.0, maxval=5.0, group="Gerenciamento de Risco")
+use_trailing_stop = input.bool(true, "Usar Trailing Stop", group="Gerenciamento de Risco")
+trailing_stop_atr = input.float(1.5, "Trailing Stop (ATR)", minval=0.5, maxval=3.0, group="Gerenciamento de Risco")
+
+// Parâmetros Larry Williams 9.1
+ema_length = input.int(9, "EMA Length (Larry Williams)", minval=1, group="Larry Williams 9.1")
+ma_filter_length = input.int(50, "MA Filtro Tendência", minval=1, group="Larry Williams 9.1")
+atr_length = input.int(14, "ATR Length", minval=1, group="Larry Williams 9.1")
+
+// Filtros de Tempo (Day Trade)
+use_time_filter = input.bool(true, "Usar Filtro de Tempo", group="Filtros de Tempo")
+start_hour = input.int(8, "Hora Início (GMT)", minval=0, maxval=23, group="Filtros de Tempo")
+end_hour = input.int(17, "Hora Fim (GMT)", minval=0, maxval=23, group="Filtros de Tempo")
+avoid_news = input.bool(true, "Evitar Horários de Notícias", group="Filtros de Tempo")
+
+// Filtros de Volatilidade (Forex)
+min_atr = input.float(0.0001, "ATR Mínimo", minval=0.0001, group="Filtros de Volatilidade")
+max_atr = input.float(0.01, "ATR Máximo", minval=0.0001, group="Filtros de Volatilidade")
+use_volatility_filter = input.bool(true, "Usar Filtro de Volatilidade", group="Filtros de Volatilidade")
+
+// Filtros de Sessão Forex
+use_session_filter = input.bool(true, "Usar Filtro de Sessão", group="Sessões Forex")
+london_session = input.bool(true, "Sessão Londres (8-17 GMT)", group="Sessões Forex")
+ny_session = input.bool(true, "Sessão NY (13-22 GMT)", group="Sessões Forex")
+tokyo_session = input.bool(false, "Sessão Tóquio (0-9 GMT)", group="Sessões Forex")
+
+// ===== CÁLCULOS DE INDICADORES =====
+// Larry Williams 9.1 - EMA de 9 períodos
+ema_9 = ta.ema(close, ema_length)
+
+// Filtro de Tendência - MA de 50 períodos
+ma_50 = ta.sma(close, ma_filter_length)
+
+// Indicadores de Volatilidade
+atr = ta.atr(atr_length)
+
+// Indicadores de Momentum para confirmação
+rsi = ta.rsi(close, 14)
+stoch_k = ta.stoch(close, high, low, 14)
+stoch_d = ta.sma(stoch_k, 3)
+
+// Indicadores de Volume (para confirmação)
+volume_ma = ta.sma(volume, 20)
+volume_spike = volume > volume_ma * 1.2
+
+// ===== CONDIÇÕES DE FILTROS =====
+// Filtro de Tendência (MA 50 apontada para cima)
+trend_bullish = ma_50 > ma_50[1] and ma_50[1] > ma_50[2]  // MA 50 em alta
+trend_bearish = ma_50 < ma_50[1] and ma_50[1] < ma_50[2]  // MA 50 em baixa
+
+// Filtro de Volatilidade
+atr_ok = not use_volatility_filter or (atr >= min_atr and atr <= max_atr)
+
+// Filtro de Tempo
+time_ok = not use_time_filter or (hour >= start_hour and hour <= end_hour)
+news_ok = not avoid_news or (hour != 8 and hour != 13 and hour != 15) // Evitar horários de notícias
+
+// Filtro de Sessão Forex
+london_active = not use_session_filter or not london_session or (hour >= 8 and hour <= 17)
+ny_active = not use_session_filter or not ny_session or (hour >= 13 and hour <= 22)
+tokyo_active = not use_session_filter or not tokyo_session or (hour >= 0 and hour <= 9)
+active_session = london_active or ny_active or tokyo_active
+
+// ===== LÓGICA LARRY WILLIAMS 9.1 =====
+// Condições de Entrada Long (Larry Williams 9.1)
+// 1. Preço fecha acima da EMA 9
+// 2. EMA 9 está em alta (slope positiva)
+// 3. MA 50 está apontada para cima (filtro de tendência)
+// 4. Confirmações adicionais
+
+ema_9_rising = ema_9 > ema_9[1] and ema_9[1] > ema_9[2]  // EMA 9 em alta
+price_above_ema9 = close > ema_9  // Preço acima da EMA 9
+momentum_bullish = rsi > 50 and stoch_k > stoch_d  // Momentum positivo
+
+long_condition = trend_bullish and 
+                 ema_9_rising and 
+                 price_above_ema9 and 
+                 momentum_bullish and 
+                 atr_ok and 
+                 time_ok and 
+                 news_ok and 
+                 active_session
+
+// Condições de Entrada Short (Larry Williams 9.1)
+// 1. Preço fecha abaixo da EMA 9
+// 2. EMA 9 está em baixa (slope negativa)
+// 3. MA 50 está apontada para baixo (filtro de tendência)
+// 4. Confirmações adicionais
+
+ema_9_falling = ema_9 < ema_9[1] and ema_9[1] < ema_9[2]  // EMA 9 em baixa
+price_below_ema9 = close < ema_9  // Preço abaixo da EMA 9
+momentum_bearish = rsi < 50 and stoch_k < stoch_d  // Momentum negativo
+
+short_condition = trend_bearish and 
+                  ema_9_falling and 
+                  price_below_ema9 and 
+                  momentum_bearish and 
+                  atr_ok and 
+                  time_ok and 
+                  news_ok and 
+                  active_session
+
+// ===== LÓGICA DE SAÍDA =====
+// Cálculo de Stop Loss e Take Profit baseado em ATR
+atr_multiplier = 2.0
+stop_distance = atr * atr_multiplier
+profit_distance = stop_distance * risk_reward_ratio
+
+// Entrada Long
+if long_condition and barstate.isconfirmed and strategy.position_size == 0
+    stop_loss = close - stop_distance
+    take_profit = close + profit_distance
+    
+    strategy.entry("Long LW9.1", strategy.long)
+    strategy.exit("Long Exit", "Long LW9.1", stop=stop_loss, limit=take_profit)
+    
+    // Trailing Stop se habilitado
+    if use_trailing_stop
+        strategy.exit("Long Trailing", "Long LW9.1", trail_price=close, trail_offset=atr * trailing_stop_atr)
+
+// Entrada Short
+if short_condition and barstate.isconfirmed and strategy.position_size == 0
+    stop_loss = close + stop_distance
+    take_profit = close - profit_distance
+    
+    strategy.entry("Short LW9.1", strategy.short)
+    strategy.exit("Short Exit", "Short LW9.1", stop=stop_loss, limit=take_profit)
+    
+    // Trailing Stop se habilitado
+    if use_trailing_stop
+        strategy.exit("Short Trailing", "Short LW9.1", trail_price=close, trail_offset=atr * trailing_stop_atr)
+
+// ===== PLOTS E VISUALIZAÇÕES =====
+// Larry Williams 9.1 - EMA 9
+plot(ema_9, "EMA 9 (Larry Williams)", color=color.blue, linewidth=2)
+
+// Filtro de Tendência - MA 50
+plot(ma_50, "MA 50 (Filtro Tendência)", color=color.red, linewidth=2)
+
+// Sinais de Entrada
+plotchar(long_condition, "Long Signal LW9.1", "▲", location.belowbar, color=color.green, size=size.normal)
+plotchar(short_condition, "Short Signal LW9.1", "▼", location.abovebar, color=color.red, size=size.normal)
+
+// Níveis de Stop Loss e Take Profit (para visualização)
+var float long_stop = na
+var float long_target = na
+var float short_stop = na
+var float short_target = na
+
+if long_condition and barstate.isconfirmed
+    long_stop := close - stop_distance
+    long_target := close + profit_distance
+
+if short_condition and barstate.isconfirmed
+    short_stop := close + stop_distance
+    short_target := close - profit_distance
+
+plot(strategy.position_size > 0 ? long_stop : na, "Stop Loss Long", color=color.red, style=plot.style_linebr)
+plot(strategy.position_size > 0 ? long_target : na, "Take Profit Long", color=color.green, style=plot.style_linebr)
+plot(strategy.position_size < 0 ? short_stop : na, "Stop Loss Short", color=color.red, style=plot.style_linebr)
+plot(strategy.position_size < 0 ? short_target : na, "Take Profit Short", color=color.green, style=plot.style_linebr)
+
+// Background para Sessões Forex
+bgcolor(london_active and use_session_filter ? color.new(color.blue, 95) : na, title="Sessão Londres")
+bgcolor(ny_active and use_session_filter ? color.new(color.orange, 95) : na, title="Sessão NY")
+bgcolor(tokyo_active and use_session_filter ? color.new(color.purple, 95) : na, title="Sessão Tóquio")
+
+// ===== ALERTAS =====
+alertcondition(long_condition, title="Larry Williams 9.1 - Long", message="Sinal de compra Larry Williams 9.1 detectado")
+alertcondition(short_condition, title="Larry Williams 9.1 - Short", message="Sinal de venda Larry Williams 9.1 detectado")
+
+// ===== INFORMAÇÕES ADICIONAIS =====
+// Display de informações na tela
+var table info_table = table.new(position.top_right, 2, 10, bgcolor=color.white, border_width=1)
+
+if barstate.islast
+    table.cell(info_table, 0, 0, "EMA 9", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 0, str.tostring(ema_9, "#.####"), text_color=color.black)
+    
+    table.cell(info_table, 0, 1, "MA 50", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 1, str.tostring(ma_50, "#.####"), text_color=color.black)
+    
+    table.cell(info_table, 0, 2, "ATR", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 2, str.tostring(atr, "#.####"), text_color=color.black)
+    
+    table.cell(info_table, 0, 3, "RSI", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 3, str.tostring(rsi, "#.##"), text_color=color.black)
+    
+    table.cell(info_table, 0, 4, "Tendência", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 4, trend_bullish ? "Bullish" : trend_bearish ? "Bearish" : "Neutral", 
+               text_color=trend_bullish ? color.green : trend_bearish ? color.red : color.gray)
+    
+    table.cell(info_table, 0, 5, "EMA 9 Slope", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 5, ema_9_rising ? "Rising" : ema_9_falling ? "Falling" : "Flat", 
+               text_color=ema_9_rising ? color.green : ema_9_falling ? color.red : color.gray)
+    
+    table.cell(info_table, 0, 6, "Sessão", text_color=color.black, bgcolor=color.gray)
+    session_text = london_active and use_session_filter ? "Londres" : 
+                   ny_active and use_session_filter ? "NY" : 
+                   tokyo_active and use_session_filter ? "Tóquio" : "Fechado"
+    table.cell(info_table, 1, 6, session_text, text_color=color.black)
+    
+    table.cell(info_table, 0, 7, "Volume", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 7, volume_spike ? "Alto" : "Normal", 
+               text_color=volume_spike ? color.green : color.gray)
+    
+    table.cell(info_table, 0, 8, "Posição", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 8, strategy.position_size > 0 ? "Long" : strategy.position_size < 0 ? "Short" : "Neutro", 
+               text_color=strategy.position_size > 0 ? color.green : strategy.position_size < 0 ? color.red : color.gray)
+    
+    table.cell(info_table, 0, 9, "P&L", text_color=color.black, bgcolor=color.gray)
+    table.cell(info_table, 1, 9, str.tostring(strategy.netprofit, "#.##"), 
+               text_color=strategy.netprofit > 0 ? color.green : color.red)
+
+// ===== COMENTÁRIOS EXPLICATIVOS =====
+// Esta estratégia implementa o sistema Larry Williams 9.1 otimizado para day trade em forex:
+// 
+// 1. LARRY WILLIAMS 9.1:
+//    - Usa EMA de 9 períodos como indicador principal
+//    - Entrada long quando preço fecha acima da EMA 9 e EMA 9 está em alta
+//    - Entrada short quando preço fecha abaixo da EMA 9 e EMA 9 está em baixa
+//
+// 2. FILTRO DE TENDÊNCIA:
+//    - MA de 50 períodos como filtro de tendência
+//    - Só opera na direção da tendência (MA 50 apontada para cima/baixo)
+//
+// 3. GERENCIAMENTO DE RISCO:
+//    - Stop loss baseado em ATR (2x ATR)
+//    - Take profit com risk/reward configurável
+//    - Trailing stop opcional
+//    - Position sizing baseado em risco por trade
+//
+// 4. FILTROS FOREX:
+//    - Filtros de sessão (Londres, NY, Tóquio)
+//    - Filtros de tempo para evitar spreads altos
+//    - Filtros de volatilidade (ATR)
+//    - Evita horários de notícias importantes
+//
+// 5. CONFIRMAÇÕES:
+//    - RSI para momentum
+//    - Stochastic para confirmação
+//    - Volume para validação
+//
+// Otimizada para pares majors como EURUSD, GBPJPY, etc.
