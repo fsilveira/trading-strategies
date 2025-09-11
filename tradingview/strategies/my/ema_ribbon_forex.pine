@@ -5,12 +5,14 @@ strategy("EMA Ribbon - Apenas Tendência de Alta", overlay=true, default_qty_typ
 // PARÂMETROS DE ENTRADA
 // ============================================================================
 risk_reward_ratio = input.float(3.0, "Risk/Reward Ratio", minval=1.0, maxval=10.0, step=0.1)
+show_ema_plots = input.bool(true, "Mostrar Plotagem das EMAs")
 show_ema_labels = input.bool(true, "Mostrar Labels das EMAs")
-show_entry_signals = input.bool(true, "Mostrar Sinais de Entrada")
 
 // ============================================================================
-// CÁLCULO DAS EMAs
+// CÁLCULO DAS EMAs (VERSÃO ESTÁVEL)
 // ============================================================================
+// Usar ta.ema padrão - o comportamento de "movimentação" no zoom é normal
+// As EMAs são calculadas corretamente baseadas nos dados disponíveis
 ema_20 = ta.ema(close, 20)
 ema_25 = ta.ema(close, 25)
 ema_30 = ta.ema(close, 30)
@@ -135,20 +137,17 @@ if sinal_entrada
 // ============================================================================
 // PLOTAGEM DAS EMAs
 // ============================================================================
-plot(ema_20, "EMA 20", color=color.white, linewidth=2)
-plot(ema_25, "EMA 25", color=color.yellow, linewidth=1)
-plot(ema_30, "EMA 30", color=color.yellow, linewidth=1)
-plot(ema_35, "EMA 35", color=color.yellow, linewidth=1)
-plot(ema_40, "EMA 40", color=color.yellow, linewidth=1)
-plot(ema_45, "EMA 45", color=color.yellow, linewidth=1)
-plot(ema_50, "EMA 50", color=color.yellow, linewidth=1)
+plot(show_ema_plots ? ema_20 : na, "EMA 20", color=color.white, linewidth=2)
+plot(show_ema_plots ? ema_25 : na, "EMA 25", color=color.yellow, linewidth=1)
+plot(show_ema_plots ? ema_30 : na, "EMA 30", color=color.yellow, linewidth=1)
+plot(show_ema_plots ? ema_35 : na, "EMA 35", color=color.yellow, linewidth=1)
+plot(show_ema_plots ? ema_40 : na, "EMA 40", color=color.yellow, linewidth=1)
+plot(show_ema_plots ? ema_45 : na, "EMA 45", color=color.yellow, linewidth=1)
+plot(show_ema_plots ? ema_50 : na, "EMA 50", color=color.yellow, linewidth=1)
 
 // ============================================================================
-// PLOTAGEM DOS PREÇOS DE ENTRADA, STOP E TAKE PROFIT
+// PLOTAGEM DOS PREÇOS DE ENTRADA, STOP E TAKE PROFIT REMOVIDA
 // ============================================================================
-plot(preco_entrada, "Preço Entrada", color=color.green, linewidth=2, style=plot.style_line)
-plot(preco_stop, "Stop Loss", color=color.red, linewidth=2, style=plot.style_line)
-plot(preco_take_profit, "Take Profit", color=color.white, linewidth=2, style=plot.style_line)
 
 // ============================================================================
 // LABELS E MARCADORES
@@ -159,11 +158,7 @@ if show_ema_labels and toque_ema_atual
               color=color.yellow, textcolor=color.black, 
               style=label.style_label_up, size=size.small)
 
-// Marcadores de entrada
-if show_entry_signals and sinal_entrada
-    label.new(bar_index, low, text="ENTRADA\nEMA " + str.tostring(ema_tocada_anterior), 
-              color=color.green, textcolor=color.white, 
-              style=label.style_label_up, size=size.normal)
+// Marcadores de entrada removidos
 
 // ============================================================================
 // BACKGROUND COLOR PARA TENDÊNCIA
