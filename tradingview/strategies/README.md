@@ -4,11 +4,11 @@ Esta pasta contém todas as estratégias de trading organizadas por categoria.
 
 ## 📁 Categorias
 
-### 📈 EMA Ribbon (`ema_ribbon/`)
+### 📈 EMA Ribbon
 Estratégias baseadas em múltiplas médias móveis exponenciais.
 
 **Arquivos:**
-- `ema_ribbon_forex.pine` - Estratégia principal EMA Ribbon
+- **[my/ema_ribbon_forex.pine](my/ema_ribbon_forex.pine)** - Estratégia principal EMA Ribbon
 
 **Características:**
 - 7 EMAs (20, 25, 30, 35, 40, 45, 50)
@@ -16,14 +16,14 @@ Estratégias baseadas em múltiplas médias móveis exponenciais.
 - Toques em EMAs como sinais de entrada
 - Gestão de risco automática
 
-### 🧠 Smart Money Concepts + Wyckoff (`smc_wyckoff/`)
+### 🧠 Smart Money Concepts + Wyckoff
 Estratégias baseadas em conceitos de dinheiro inteligente e metodologia Wyckoff.
 
 **Arquivos:**
-- `bb_squeeze_smc_breakout_forex.pine` - Bollinger Bands + SMC + Breakout
-- `smc_liquidity_grab_bb_bounce_forex.pine` - Liquidity Grab + BB Bounce
-- `smc_order_block_bb_squeeze_forex.pine` - Order Blocks + BB Squeeze
-- `wyckoff_accumulation_bb_forex.pine` - Wyckoff Accumulation + BB
+- **[my/bb_squeeze_smc_breakout_forex.pine](my/bb_squeeze_smc_breakout_forex.pine)** - Bollinger Bands + SMC + Breakout
+- **[my/smc_liquidity_grab_bb_bounce_forex.pine](my/smc_liquidity_grab_bb_bounce_forex.pine)** - Liquidity Grab + BB Bounce
+- **[my/smc_order_block_bb_squeeze_forex.pine](my/smc_order_block_bb_squeeze_forex.pine)** - Order Blocks + BB Squeeze
+- **[my/wyckoff_accumulation_bb_forex.pine](my/wyckoff_accumulation_bb_forex.pine)** - Wyckoff Accumulation + BB
 
 **Características:**
 - Análise de Order Blocks
@@ -31,12 +31,12 @@ Estratégias baseadas em conceitos de dinheiro inteligente e metodologia Wyckoff
 - Padrões de Acumulação Wyckoff
 - Integração com Bollinger Bands
 
-### 📈 Larry Williams (`larry_williams/`)
+### 📈 Larry Williams
 Estratégias baseadas na metodologia de Larry Williams.
 
 **Arquivos:**
-- `larry_williams_9_1_forex.pine` - Versão 9.1
-- `larry_williams_9_2_forex.pine` - Versão 9.2
+- **[my/larry_williams_9_1_forex.pine](my/larry_williams_9_1_forex.pine)** - Versão 9.1
+- **[my/larry_williams_9_2_forex.pine](my/larry_williams_9_2_forex.pine)** - Versão 9.2
 
 **Características:**
 - Indicadores Larry Williams
@@ -44,11 +44,11 @@ Estratégias baseadas na metodologia de Larry Williams.
 - Sinais de reversão
 - Gestão de risco adaptativa
 
-### 📚 Exemplos (`examples/`)
+### 📚 Exemplos
 Templates e exemplos para desenvolvimento de novas estratégias.
 
 **Arquivos:**
-- `exemplo_estrategia_forex.pine` - Template base
+- **[my/exemplo_estrategia_forex.pine](my/exemplo_estrategia_forex.pine)** - Template base
 
 **Características:**
 - Estrutura padrão Pine Script

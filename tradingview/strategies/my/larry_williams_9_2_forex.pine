@@ -5,6 +5,35 @@ strategy("Larry Williams 9.2 - Day Trade Forex", overlay=true,
          commission_type=strategy.commission.percent,
          commission_value=0.0001)
 
+// ============================================================================
+// 📊 ESTRATÉGIA LARRY WILLIAMS 9.2 - DAY TRADE FOREX
+// ============================================================================
+//
+// 🎯 PROPÓSITO:
+// Esta estratégia implementa o sistema Larry Williams 9.2 com setup de pullback
+// otimizado para day trade em forex, usando EMA de 9 períodos e lógica de setup.
+//
+// 🔧 FUNCIONAMENTO:
+// 1. SETUP LONG: Candle fecha abaixo da mínima do candle anterior
+// 2. ENTRADA LONG: Preço rompe a máxima do candle que fechou abaixo
+// 3. SETUP SHORT: Candle fecha acima da máxima do candle anterior
+// 4. ENTRADA SHORT: Preço rompe a mínima do candle que fechou acima
+// 5. GESTÃO: Stop loss na mínima/máxima do candle de setup
+//
+// 📈 CARACTERÍSTICAS:
+// - Usa setup de pullback em vez de cruzamento direto
+// - Stop loss mais preciso (baseado no setup)
+// - Melhor timing de entrada
+// - Menos sinais falsos
+// - Filtros de sessão forex
+//
+// ⏰ TIMEFRAME IDEAL: M5, M15, M30
+// 💱 PARES RECOMENDADOS: EUR/USD, GBP/USD, USD/JPY
+// 🎯 TIPO: Pullback Trading (Trading de Retração)
+// ⭐ DIFICULDADE: ⭐⭐⭐ (Intermediário)
+//
+// ============================================================================
+
 // ===== INPUTS CONFIGURÁVEIS =====
 // Parâmetros de Risco
 risk_per_trade = input.float(2.0, "Risco por Trade (%)", minval=0.1, maxval=5.0, group="Gerenciamento de Risco")

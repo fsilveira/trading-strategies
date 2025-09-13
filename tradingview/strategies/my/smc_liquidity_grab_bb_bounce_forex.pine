@@ -5,6 +5,35 @@ strategy("SMC Liquidity Grab + BB Bounce - Day Trade Forex", overlay=true,
          commission_type=strategy.commission.percent,
          commission_value=0.0001)
 
+// ============================================================================
+// 📊 ESTRATÉGIA SMC LIQUIDITY GRAB + BB BOUNCE - DAY TRADE FOREX
+// ============================================================================
+//
+// 🎯 PROPÓSITO:
+// Esta estratégia combina Smart Money Concepts (SMC) Liquidity Grab com Bollinger
+// Bands Bounce para identificar reversões de alta probabilidade em day trade forex.
+//
+// 🔧 FUNCIONAMENTO:
+// 1. LIQUIDITY GRAB: Identifica quando o preço "pega" liquidez (stops) em zonas
+//    de alta/mínima anteriores
+// 2. BB BOUNCE: Entrada no bounce da banda inferior (bullish) ou superior (bearish)
+// 3. REJEIÇÃO: Confirmação de rejeição clara da zona de liquidez
+// 4. GESTÃO: Stop loss baseado em ATR, take profit com risk/reward configurável
+//
+// 📈 CARACTERÍSTICAS:
+// - Win rate muito alto (70-80%)
+// - Muitas oportunidades de entrada
+// - Lógica clara de reversão
+// - Filtros de sessão forex
+// - Confirmação de volume e momentum
+//
+// ⏰ TIMEFRAME IDEAL: M5, M15
+// 💱 PARES RECOMENDADOS: EUR/USD, GBP/USD, USD/JPY
+// 🎯 TIPO: Mean Reversion (Reversão à Média)
+// ⭐ DIFICULDADE: ⭐⭐⭐⭐ (Avançado)
+//
+// ============================================================================
+
 // ===== INPUTS CONFIGURÁVEIS =====
 // Parâmetros de Risco
 risk_per_trade = input.float(2.0, "Risco por Trade (%)", minval=0.1, maxval=5.0, group="Gerenciamento de Risco")

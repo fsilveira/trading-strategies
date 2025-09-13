@@ -5,6 +5,36 @@ strategy("Wyckoff Accumulation + BB Mean Reversion - Day Trade Forex", overlay=t
          commission_type=strategy.commission.percent,
          commission_value=0.0001)
 
+// ============================================================================
+// 📊 ESTRATÉGIA WYCKOFF ACCUMULATION + BB MEAN REVERSION - DAY TRADE FOREX
+// ============================================================================
+//
+// 🎯 PROPÓSITO:
+// Esta estratégia combina fases de acumulação de Wyckoff com reversão à média das
+// Bollinger Bands para identificar pontos de entrada em day trade forex.
+//
+// 🔧 FUNCIONAMENTO:
+// 1. WYCKOFF PHASES: Identifica fases de acumulação (Spring, Test, Jump)
+//    - Spring: Quebra falsa do suporte (trap)
+//    - Test: Teste secundário do suporte
+//    - Jump: Sinal de força (breakout)
+// 2. BB MEAN REVERSION: Entrada na banda inferior durante acumulação (oversold)
+// 3. GESTÃO: Stop loss baseado em ATR, take profit com risk/reward configurável
+//
+// 📈 CARACTERÍSTICAS:
+// - Lógica clara e bem definida
+// - Boa para iniciantes
+// - Menor risco
+// - Funciona bem em tendências
+// - Filtros de sessão forex
+//
+// ⏰ TIMEFRAME IDEAL: M15, H1
+// 💱 PARES RECOMENDADOS: EUR/USD, GBP/USD, USD/JPY
+// 🎯 TIPO: Accumulation Trading (Trading de Acumulação)
+// ⭐ DIFICULDADE: ⭐⭐⭐ (Intermediário)
+//
+// ============================================================================
+
 // ===== INPUTS CONFIGURÁVEIS =====
 // Parâmetros de Risco
 risk_per_trade = input.float(2.0, "Risco por Trade (%)", minval=0.1, maxval=5.0, group="Gerenciamento de Risco")

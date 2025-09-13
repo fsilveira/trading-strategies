@@ -5,6 +5,35 @@ strategy("Larry Williams 9.1 - Day Trade Forex", overlay=true,
          commission_type=strategy.commission.percent,
          commission_value=0.0001)
 
+// ============================================================================
+// 📊 ESTRATÉGIA LARRY WILLIAMS 9.1 - DAY TRADE FOREX
+// ============================================================================
+//
+// 🎯 PROPÓSITO:
+// Esta estratégia implementa o sistema clássico Larry Williams 9.1 otimizado para
+// day trade em forex, usando EMA de 9 períodos como indicador principal.
+//
+// 🔧 FUNCIONAMENTO:
+// 1. EMA 9: Usa EMA de 9 períodos como indicador principal
+// 2. FILTRO DE TENDÊNCIA: MA de 50 períodos como filtro de tendência
+// 3. ENTRADA LONG: Preço fecha acima da EMA 9 e EMA 9 está em alta
+// 4. ENTRADA SHORT: Preço fecha abaixo da EMA 9 e EMA 9 está em baixa
+// 5. GESTÃO: Stop loss baseado em ATR, take profit com risk/reward configurável
+//
+// 📈 CARACTERÍSTICAS:
+// - Sistema clássico e testado
+// - Lógica simples e clara
+// - Boa para iniciantes
+// - Filtros de sessão forex
+// - Confirmação com RSI e Stochastic
+//
+// ⏰ TIMEFRAME IDEAL: M15, H1
+// 💱 PARES RECOMENDADOS: EUR/USD, GBP/USD, USD/JPY
+// 🎯 TIPO: Trend Following (Seguimento de Tendência)
+// ⭐ DIFICULDADE: ⭐⭐ (Iniciante)
+//
+// ============================================================================
+
 // ===== INPUTS CONFIGURÁVEIS =====
 // Parâmetros de Risco
 risk_per_trade = input.float(2.0, "Risco por Trade (%)", minval=0.1, maxval=5.0, group="Gerenciamento de Risco")

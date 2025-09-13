@@ -5,6 +5,34 @@ strategy("Estratégia Forex - Breakout com Confirmação", overlay=true,
          commission_type=strategy.commission.percent,
          commission_value=0.0001)
 
+// ============================================================================
+// 📊 ESTRATÉGIA EXEMPLO - BREAKOUT COM CONFIRMAÇÃO
+// ============================================================================
+//
+// 🎯 PROPÓSITO:
+// Esta é uma estratégia exemplo que demonstra como criar uma estratégia de breakout
+// com múltiplas confirmações para day trade em forex.
+//
+// 🔧 FUNCIONAMENTO:
+// 1. BREAKOUT: Rompimento de máxima/mínima de 20 períodos
+// 2. CONFIRMAÇÃO: Volume spike, momentum positivo (RSI, Stochastic)
+// 3. FILTROS: Tendência (EMAs), volatilidade (ATR), sessões forex
+// 4. GESTÃO: Stop loss baseado em ATR, take profit com risk/reward configurável
+//
+// 📈 CARACTERÍSTICAS:
+// - Template base para desenvolvimento
+// - Múltiplos filtros de confirmação
+// - Gerenciamento de risco completo
+// - Filtros de sessão forex
+// - Visualizações avançadas
+//
+// ⏰ TIMEFRAME IDEAL: M15, H1
+// 💱 PARES RECOMENDADOS: EUR/USD, GBP/USD, USD/JPY
+// 🎯 TIPO: Breakout Trading (Trading de Rompimento)
+// ⭐ DIFICULDADE: ⭐⭐⭐ (Intermediário)
+//
+// ============================================================================
+
 // ===== INPUTS CONFIGURÁVEIS =====
 // Parâmetros de Risco
 risk_per_trade = input.float(2.0, "Risco por Trade (%)", minval=0.1, maxval=5.0, group="Gerenciamento de Risco")

@@ -5,6 +5,35 @@ strategy("BB Squeeze + SMC Breakout - Day Trade Forex", overlay=true,
          commission_type=strategy.commission.percent,
          commission_value=0.0001)
 
+// ============================================================================
+// 📊 ESTRATÉGIA BB SQUEEZE + SMC BREAKOUT - DAY TRADE FOREX
+// ============================================================================
+//
+// 🎯 PROPÓSITO:
+// Esta estratégia combina Bollinger Bands Squeeze com Smart Money Concepts (SMC)
+// para identificar breakouts de alta probabilidade em day trade forex.
+//
+// 🔧 FUNCIONAMENTO:
+// 1. BB SQUEEZE: Detecta períodos de baixa volatilidade (acumulação)
+// 2. SMC CONFIRMAÇÃO: Identifica Break of Structure (BOS), Change of Character (CHoCH),
+//    Liquidity Zones e Order Blocks
+// 3. ENTRADA: Breakout da zona de compressão com confirmação SMC
+// 4. GESTÃO: Stop loss baseado em ATR, take profit com risk/reward configurável
+//
+// 📈 CARACTERÍSTICAS:
+// - Combina análise de volatilidade (BB) com conceitos de smart money (SMC)
+// - Filtros de sessão forex (Londres, NY, Tóquio)
+// - Filtros de tempo para evitar spreads altos
+// - Confirmação de volume e momentum
+// - Trailing stop opcional
+//
+// ⏰ TIMEFRAME IDEAL: M5, M15
+// 💱 PARES RECOMENDADOS: EUR/USD, GBP/USD, USD/JPY
+// 🎯 TIPO: Breakout Trading (Trading de Rompimento)
+// ⭐ DIFICULDADE: ⭐⭐⭐⭐ (Avançado)
+//
+// ============================================================================
+
 // ===== INPUTS CONFIGURÁVEIS =====
 // Parâmetros de Risco
 risk_per_trade = input.float(2.0, "Risco por Trade (%)", minval=0.1, maxval=5.0, group="Gerenciamento de Risco")

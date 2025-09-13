@@ -2,11 +2,41 @@
 strategy("EMA Ribbon - Apenas Tendência de Alta", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
 
 // ============================================================================
+// 📊 ESTRATÉGIA EMA RIBBON - TRADING DE TENDÊNCIA DE ALTA
+// ============================================================================
+//
+// 🎯 PROPÓSITO:
+// Esta estratégia identifica e opera apenas em tendências de alta usando um conjunto
+// de 7 EMAs (20, 25, 30, 35, 40, 45, 50) que formam um "ribbon" (fita).
+// 
+// 🔧 FUNCIONAMENTO:
+// 1. TENDÊNCIA DE ALTA: Todas as 7 EMAs devem estar alinhadas em ordem crescente
+//    e todas subindo simultaneamente
+// 2. SINAL DE ENTRADA: Preço toca uma EMA e depois rompe a máxima do candle anterior
+// 3. STOP LOSS: Colocado na EMA imediatamente abaixo da EMA tocada
+// 4. TAKE PROFIT: Calculado com base na relação risco/recompensa configurável
+//
+// 📈 CARACTERÍSTICAS:
+// - Foco exclusivo em tendências de alta (bullish bias)
+// - Detecção de toques em EMAs como pontos de entrada
+// - Gestão de risco automática baseada na estrutura das EMAs
+// - Risk/Reward configurável (padrão 1:3)
+// - Visualização clara da tendência com background colorido
+//
+// ⏰ TIMEFRAME IDEAL: M15, H1, H4
+// 💱 PARES RECOMENDADOS: EUR/USD, GBP/USD, USD/JPY
+// 🎯 TIPO: Trend Following (Seguimento de Tendência)
+// ⭐ DIFICULDADE: ⭐⭐⭐ (Intermediário)
+//
+// ============================================================================
+
+// ============================================================================
 // PARÂMETROS DE ENTRADA
 // ============================================================================
 risk_reward_ratio = input.float(3.0, "Risk/Reward Ratio", minval=1.0, maxval=10.0, step=0.1)
 show_ema_plots = input.bool(true, "Mostrar Plotagem das EMAs")
 show_ema_labels = input.bool(true, "Mostrar Labels das EMAs")
+show_price_levels = input.bool(true, "Mostrar Níveis de Preço (Entrada/Stop/TP)")
 
 // ============================================================================
 // CÁLCULO DAS EMAs (VERSÃO ESTÁVEL)
@@ -138,16 +168,29 @@ if sinal_entrada
 // PLOTAGEM DAS EMAs
 // ============================================================================
 plot(show_ema_plots ? ema_20 : na, "EMA 20", color=color.white, linewidth=2)
-plot(show_ema_plots ? ema_25 : na, "EMA 25", color=color.yellow, linewidth=1)
-plot(show_ema_plots ? ema_30 : na, "EMA 30", color=color.yellow, linewidth=1)
-plot(show_ema_plots ? ema_35 : na, "EMA 35", color=color.yellow, linewidth=1)
-plot(show_ema_plots ? ema_40 : na, "EMA 40", color=color.yellow, linewidth=1)
-plot(show_ema_plots ? ema_45 : na, "EMA 45", color=color.yellow, linewidth=1)
-plot(show_ema_plots ? ema_50 : na, "EMA 50", color=color.yellow, linewidth=1)
+plot(show_ema_plots ? ema_25 : na, "EMA 25", color=color.rgb(193, 186, 130), linewidth=1)
+plot(show_ema_plots ? ema_30 : na, "EMA 30", color=color.rgb(193, 186, 130), linewidth=1)
+plot(show_ema_plots ? ema_35 : na, "EMA 35", color=color.rgb(193, 186, 130), linewidth=1)
+plot(show_ema_plots ? ema_40 : na, "EMA 40", color=color.rgb(193, 186, 130), linewidth=1)
+plot(show_ema_plots ? ema_45 : na, "EMA 45", color=color.rgb(193, 186, 130), linewidth=1)
+plot(show_ema_plots ? ema_50 : na, "EMA 50", color=color.rgb(193, 186, 130), linewidth=1)
 
 // ============================================================================
-// PLOTAGEM DOS PREÇOS DE ENTRADA, STOP E TAKE PROFIT REMOVIDA
+// PLOTAGEM DOS PREÇOS DE ENTRADA, STOP E TAKE PROFIT
 // ============================================================================
+// Plotar labels com texto dos níveis de preço APENAS quando houver sinal de entrada
+if show_price_levels and sinal_entrada
+    label.new(bar_index, preco_entrada, "Entry", 
+              color=color.orange, textcolor=color.white, 
+              style=label.style_label_down, size=size.small)
+    
+    label.new(bar_index, preco_stop, "Stop", 
+              color=color.red, textcolor=color.white, 
+              style=label.style_label_up, size=size.small)
+    
+    label.new(bar_index, preco_take_profit, "Take", 
+              color=color.blue, textcolor=color.white, 
+              style=label.style_label_down, size=size.small)
 
 // ============================================================================
 // LABELS E MARCADORES
@@ -168,43 +211,8 @@ bgcolor(tendencia_alta ? color.new(color.green, 95) : na, title="Tendência de A
 // ============================================================================
 // ALERTAS
 // ============================================================================
-alertcondition(sinal_entrada, title="Sinal de Entrada EMA Ribbon", 
-               message="Sinal de compra detectado - EMA tocada")
+// Para estratégias, usar alert() em vez de alertcondition()
+if sinal_entrada
+    alert("Sinal de compra detectado - EMA " + str.tostring(ema_tocada_anterior) + " tocada", alert.freq_once_per_bar)
 
-// ============================================================================
-// TABELA DE INFORMAÇÕES
-// ============================================================================
-if barstate.islast
-    var table info_table = table.new(position.top_right, 2, 8, bgcolor=color.white, border_width=1)
-    
-    table.cell(info_table, 0, 0, "EMA Ribbon Status", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 0, tendencia_alta ? "TENDÊNCIA ALTA" : "SEM TENDÊNCIA", 
-               text_color=tendencia_alta ? color.green : color.red, text_size=size.small)
-    
-    table.cell(info_table, 0, 1, "Alinhamento EMAs", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 1, alinhamento_emas ? "OK" : "NÃO", 
-               text_color=alinhamento_emas ? color.green : color.red, text_size=size.small)
-    
-    table.cell(info_table, 0, 2, "Momentum Alta", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 2, momentum_alta ? "OK" : "NÃO", 
-               text_color=momentum_alta ? color.green : color.red, text_size=size.small)
-    
-    table.cell(info_table, 0, 3, "Toque EMA Anterior", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 3, toque_ema_anterior ? "EMA " + str.tostring(ema_tocada_anterior) : "NÃO", 
-               text_color=toque_ema_anterior ? color.blue : color.gray, text_size=size.small)
-    
-    table.cell(info_table, 0, 4, "Posição Atual", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 4, strategy.position_size > 0 ? "LONG" : strategy.position_size < 0 ? "SHORT" : "NEUTRO", 
-               text_color=strategy.position_size > 0 ? color.green : strategy.position_size < 0 ? color.red : color.gray, text_size=size.small)
-    
-    table.cell(info_table, 0, 5, "Preço Entrada", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 5, not na(preco_entrada) ? str.tostring(preco_entrada, "#.#####") : "N/A", 
-               text_color=color.black, text_size=size.small)
-    
-    table.cell(info_table, 0, 6, "Stop Loss", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 6, not na(preco_stop) ? str.tostring(preco_stop, "#.#####") : "N/A", 
-               text_color=color.red, text_size=size.small)
-    
-    table.cell(info_table, 0, 7, "Take Profit", text_color=color.black, text_size=size.small)
-    table.cell(info_table, 1, 7, not na(preco_take_profit) ? str.tostring(preco_take_profit, "#.#####") : "N/A", 
-               text_color=color.green, text_size=size.small)
+
