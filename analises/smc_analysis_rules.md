@@ -47,34 +47,6 @@
 - Confluência com níveis de fibonacci
 - Volume confirmando o movimento
 
-### **TIMING DE ENTRADA - Critérios de Avaliação**
-
-#### **ENTRADA IMEDIATA (80-100%)**
-✅ **Condições Ideais:**
-- Alinhamento perfeito HTF + LTF (ambos bullish/bearish)
-- Order Block não mitigado sendo testado AGORA
-- FVG ativo e sendo respeitado
-- Liquidity sweep recente + reversão confirmada
-- Volume significativo confirmando movimento
-- Sem eventos de alto impacto próximos
-
-#### **ENTRADA COM CAUTELA (60-79%)**
-⚠️ **Condições Moderadas:**
-- Estrutura LTF favorável, HTF neutro
-- Order Block testado mas não confirmado
-- FVG parcialmente preenchido
-- Volume moderado ou não confirmado
-- Algumas confluências presentes
-
-#### **AGUARDAR (0-59%)**
-❌ **Condições Desfavoráveis:**
-- Estrutura HTF contrária ao setup
-- Order Block já mitigado
-- FVG completamente preenchido
-- Ausência de volume confirmatório
-- Múltiplas confluências ausentes
-- Eventos de alto impacto próximos
-
 ### **Setup de Venda (Short)**
 ✅ **Condições Obrigatórias:**
 - Market structure bearish ou mudança para bearish
@@ -89,24 +61,70 @@
 - Confluência com níveis de fibonacci
 - Volume confirmando o movimento
 
-### **Fatores de Timing Específicos**
+## 2.1. TIPOS DE ORDENS E TIMING
 
-#### **Alinhamento de Timeframes**
-- **HTF Bullish + LTF Bullish**: 90-100% recomendação
-- **HTF Neutro + LTF Bullish**: 60-70% recomendação
-- **HTF Bearish + LTF Bullish**: 20-40% recomendação
+### **ENTRADA IMEDIATA (Market Order) - 80-100%**
+✅ **Condições Ideais:**
+- Alinhamento perfeito HTF + LTF (ambos bullish/bearish)
+- Order Block não mitigado sendo testado AGORA
+- FVG ativo e sendo respeitado
+- Liquidity sweep recente + reversão confirmada
+- Volume significativo confirmando movimento
+- Sem eventos de alto impacto próximos
 
-#### **Qualidade do Order Block**
-- **Não Mitigado + Testando AGORA**: +20% recomendação
-- **Não Mitigado + Aguardando teste**: +10% recomendação
-- **Parcialmente Mitigado**: -10% recomendação
-- **Completamente Mitigado**: -30% recomendação
+**AÇÃO:** Executar ordem de mercado imediatamente
 
-#### **Confluências Técnicas**
-- **3+ Confluências**: +15% recomendação
-- **2 Confluências**: +10% recomendação
-- **1 Confluência**: +5% recomendação
-- **Sem Confluências**: -20% recomendação
+### **ORDEM LIMITE (Limit Order) - 60-79%**
+⚠️ **Condições para Ordem Limite:**
+- Estrutura HTF favorável, LTF aguardando confirmação
+- Order Block não mitigado em zona de interesse
+- Preço próximo mas não testando o Order Block
+- FVG ativo presente na direção do movimento
+- Volume moderado ou crescente
+- Confluências técnicas presentes
+
+**AÇÃO:** Colocar ordem limite no nível do Order Block ou FVG
+
+### **ORDEM LIMITE COM CONFIRMAÇÃO - 40-59%**
+⚠️ **Condições Moderadas:**
+- Estrutura LTF favorável, HTF neutro
+- Order Block testado mas não confirmado
+- FVG parcialmente preenchido
+- Volume moderado ou não confirmado
+- Algumas confluências presentes
+
+**AÇÃO:** Colocar ordem limite + aguardar confirmação específica
+
+### **AGUARDAR (Sem Ordem) - 0-39%**
+❌ **Condições Desfavoráveis:**
+- Estrutura HTF contrária ao setup
+- Order Block já mitigado
+- FVG completamente preenchido
+- Ausência de volume confirmatório
+- Múltiplas confluências ausentes
+- Eventos de alto impacto próximos
+
+**AÇÃO:** Não operar, aguardar melhores condições
+
+### **CRITÉRIOS DE CONFIRMAÇÃO PARA ORDENS LIMITE**
+
+#### **Confirmações Obrigatórias:**
+- ✅ **BOS/CHoCH** na direção do setup
+- ✅ **Volume** confirmando o movimento
+- ✅ **Rejeição** em zona-chave com wick significativo
+- ✅ **Fechamento** de vela confirmando direção
+
+#### **Confirmações Adicionais:**
+- ⭐ **Liquidity Sweep** seguido de reversão
+- ⭐ **FVG** sendo respeitado
+- ⭐ **Confluência** com Fibonacci/Support/Resistance
+- ⭐ **Alinhamento** entre múltiplos timeframes
+
+#### **Cancelamento de Ordem Limite:**
+- ❌ **BOS** contrário ao setup
+- ❌ **Order Block** sendo mitigado
+- ❌ **Volume** não confirmando
+- ❌ **Evento** de alto impacto próximo
 
 ## 3. GERENCIAMENTO DE RISCO
 
@@ -210,9 +228,11 @@
 2. **🔍 IDENTIFICAÇÃO SMC** - Tabelas de Market Structure, Order Blocks, FVGs
 3. **🎯 ENTRADA SUGERIDA** - Setup detalhado em tabela
 4. **⏰ TIMING DE ENTRADA** - Avaliação de entrada AGORA vs AGUARDAR com % de recomendação
-5. **⚖️ GERENCIAMENTO** - Stop Loss e Targets em tabela
-6. **⚠️ RISCOS** - Cenários de invalidação em tabela
-7. **📈 PLANO DE EXECUÇÃO** - Sequência de ações
+5. **📋 TIPO DE ORDEM** - Market Order, Limit Order ou Aguardar com justificativa
+6. **✅ CONFIRMAÇÕES NECESSÁRIAS** - Lista específica de confirmações para ordens limite
+7. **⚖️ GERENCIAMENTO** - Stop Loss e Targets em tabela
+8. **⚠️ RISCOS** - Cenários de invalidação em tabela
+9. **📈 PLANO DE EXECUÇÃO** - Sequência de ações com data/hora da análise
 
 ### **Elementos Visuais**
 - **Emojis**: Use para categorizar e destacar
@@ -226,6 +246,12 @@
 - Cálculos de Risk/Reward
 - Percentuais de saída parcial
 - Probabilidades de cenários
+
+### **Registro Temporal**
+- **OBRIGATÓRIO**: Incluir data e hora da análise no PLANO DE EXECUÇÃO
+- **Formato**: DD/MM/YYYY HH:MM (UTC-3)
+- **Finalidade**: Facilitar identificação da última análise e validade temporal
+- **Exemplo**: "Análise realizada em: 17/09/2024 08:15 (UTC-3)"
 
 ## 9. DICAS OPERACIONAIS
 
